@@ -1,0 +1,14 @@
+{
+  "name": "date-format-utils",
+  "version": "1.0.5",
+  "description": "date formatting, conversion module (beta version - not stable)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "date-utils"
+  ],
+  "author": "deepak ambekar <ambedeepak99@gmail.com>",
+  "license": "ISC"
+}
