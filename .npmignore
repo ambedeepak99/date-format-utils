@@ -18,3 +18,4 @@ jspm_packages
 .idea
 .*.swp
 .npmrc
+.gitignore

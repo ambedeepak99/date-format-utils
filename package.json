@@ -1,7 +1,7 @@
 {
   "name": "date-format-utils",
-  "version": "1.0.5",
-  "description": "date formatting, conversion module (beta version - not stable)",
+  "version": "1.0.10",
+  "description": "date formatting, conversion module (beta version - unstable, Currently this package is in development mode)",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,5 +10,6 @@
     "date-utils"
   ],
   "author": "deepak ambekar <ambedeepak99@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }
