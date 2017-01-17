@@ -1,6 +1,6 @@
 {
   "name": "date-format-utils",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "date formatting, conversion module (beta version - unstable, Currently this package is in development mode)",
   "main": "app.js",
   "scripts": {

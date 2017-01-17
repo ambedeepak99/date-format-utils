@@ -12,7 +12,12 @@ var exportFunctions = {
     getMinutes: getMinutes,
     getSeconds: getSeconds,
     getMilliseconds: getMilliseconds,
-    getDayOfWeek:getDayOfWeek
+    getDayOfWeek:getDayOfWeek,
+    ISO8601_FORMAT:ISO8601_FORMAT,
+    ISO8601_WITH_TZ_OFFSET_FORMAT:ISO8601_WITH_TZ_OFFSET_FORMAT,
+    DATETIME_FORMAT:DATETIME_FORMAT,
+    DATE_FORMAT:DATE_FORMAT,
+    TIME_FORMAT:TIME_FORMAT
 };
 module.exports = exportFunctions;
 
@@ -20,6 +25,14 @@ module.exports = exportFunctions;
 var numRegex = /^\d+$/;
 var monthArrayList=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var dayOfWeekArrayList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var invalidDateMsg="Invalid Date";
+var invalidOperationMsg="Invalid Date Operation";
+var invalidDateFormatMsg="Invalid Date Format";
+var ISO8601_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS';
+var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddThh:mm:ss.SSSO';
+var DATETIME_FORMAT = 'dd MM yyyy hh:mm:ss.SSS';
+var DATE_FORMAT = 'dd MM yyyy';
+var TIME_FORMAT = 'hh:mm:ss.SSS';
 //endregion
 
 
@@ -58,7 +71,7 @@ function getYear(d,option,disOption,checkValid) {
         if(dateObj)
         {
             var year=(option=='utc'?dateObj.getUTCFullYear():dateObj.getFullYear()).toString();
-            return (disOption=='sy'?year.substr(2,2):year);
+            return (disOption=='yy'?year.substr(2,2):year);
         }
         return dateObj;
     }
@@ -76,9 +89,9 @@ function getMonth(d,option,disOption,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var month = (option == 'utc' ? (dateObj.getUTCMonth() + 1) : (dateObj.getMonth() + 1));
-            if(disOption=='mfn')
+            if(disOption=='MONTH')
                 return monthArrayList[month-1];
-            else if(disOption=='msn')
+            else if(disOption=='month')
                 return monthArrayList[month-1].substr(0,3);
             else
                 return appendZero(month, 2);
@@ -111,13 +124,20 @@ function getDate(d,option,checkValid) {
 // console.log(getDate('1484588155000'));
 // console.log(getDate(1484588155000,'utc',true));
 
+function get12HoursFormat(hour,disOption)
+{
+    if(disOption=='12')
+        return (hour>12?hour-12:hour);
+    return hour;
+}
 
-function getHours(d,option,checkValid) {
+
+function getHours(d,option,disOption,checkValid) {
     try{
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var hours = (option == 'utc' ? dateObj.getUTCHours(): dateObj.getHours());
-            return appendZero(hours, 2);
+            return appendZero(get12HoursFormat(hours,disOption), 2);
         }
         return dateObj;
     }
@@ -160,7 +180,7 @@ function getMilliseconds(d,option,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var ms = (option == 'utc' ? dateObj.getUTCMilliseconds(): dateObj.getMilliseconds());
-            return appendZero(ms, 2);
+            return appendZero(ms, 3);
         }
         return dateObj;
     }
@@ -174,9 +194,9 @@ function getDayOfWeek(d,option,disOption,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var dow = (option == 'utc' ? (dateObj.getUTCDay() + 1) : (dateObj.getDay() + 1));
-            if(disOption=='dfn')
+            if(disOption=='DOW')
                 return dayOfWeekArrayList[dow-1];
-            else if(disOption=='dsn')
+            else if(disOption=='dow')
                 return dayOfWeekArrayList[dow-1].substr(0,3);
             else
                 return appendZero(dow, 2);
@@ -190,14 +210,98 @@ function getDayOfWeek(d,option,disOption,checkValid) {
 // console.log(getDayOfWeek(new Date()));
 // console.log(getDayOfWeek('1484588155000','utc','dsn',true));
 // console.log(getDayOfWeek(1484588155000,'','dfn',true));
+
+
+function getAM_PM_Hours(dateObj,format,option)
+{
+    var hour=(option == 'utc' ? dateObj.getUTCHours(): dateObj.getHours());
+    var AM_PM={
+        type:"AM",
+        hour:appendZero(hour,2)
+    };
+    if(hour>=12)
+    {
+        AM_PM.type="PM";
+    }
+    if(format.indexOf('hh')!=-1)
+    {
+        AM_PM.hour=appendZero(get12HoursFormat(hour,'12'), 2);
+    }
+    return AM_PM;
+}
+function timeOffset(timezoneOffset) {
+    var os = Math.abs(timezoneOffset);
+    var hour = appendZero((Math.floor(os / 60)),2);
+    var minute = appendZero((os % 60),2);
+    return (timezoneOffset < 0 ? "+"+hour+minute : "-"+hour+minute);
+}
+
 //endregion
 
-function formatDate(dateString, formatStyle) {
-    var dateObj = new Date(dateString);
-    var finalResult = dateObj.toDateString();
-    return finalResult;
+
+
+function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
+    try {
+        var dateObj = validateDate(dateString, true);
+        if (dateObj) {
+            if (!timezoneOffset) {
+                timezoneOffset = dateObj.getTimezoneOffset();
+            }
+            else {
+                timezoneOffset=0-timezoneOffset;
+            }
+            if (typeof formatStyle !== 'string') {
+                formatStyle = ISO8601_FORMAT;
+            }
+            dateObj.setUTCMinutes(dateObj.getUTCMinutes() - timezoneOffset);
+
+            var day = getDate(dateObj, 'utc');//dd
+            var month = getMonth(dateObj, 'utc'); //MM
+            var monthFullName = getMonth(dateObj, 'utc', 'MONTH'); //MONTH
+            var monthShortName = getMonth(dateObj, 'utc', 'month'); //month
+            var fullYear = getYear(dateObj, 'utc');//yyyy
+            var shortYear = getYear(dateObj, 'utc', 'yy');
+            var hourObj = getAM_PM_Hours(dateObj, formatStyle, 'utc');// hh or HH and tt
+            var minute = getMinutes(dateObj, 'utc'); // mm
+            var second = getSeconds(dateObj, 'utc'); // ss
+            var millisecond = getMilliseconds(dateObj, 'utc');//SSS
+            var timeZone = timeOffset(timezoneOffset);//O
+            var DOWFullName = getDayOfWeek(dateObj, 'utc', 'DOW');
+            var DOWShortName = getDayOfWeek(dateObj, 'utc', 'dow');
+
+            dateObj.setUTCMinutes(dateObj.getUTCMinutes() + timezoneOffset);
+
+            var formattedString= formatStyle.replace(/dd/g,day)
+                .replace(/MM/g,month)
+                .replace(/MONTH/g,monthFullName)
+                .replace(/month/g,monthShortName)
+                .replace(/yyyy/g,fullYear)
+                .replace(/yy/g,shortYear)
+                .replace(/hh/gi,hourObj.hour)
+                .replace(/mm/g,minute)
+                .replace(/ss/g,second)
+                .replace(/SSS/g,millisecond)
+                .replace(/tt/g,hourObj.type)
+                .replace(/DOW/g,DOWFullName)
+                .replace(/dow/g,DOWShortName)
+                .replace(/O/g,timeZone);
+
+            if(validateOutput==true)
+            {
+                var validDate=validateDate(formattedString,true);
+                if(!validDate)
+                    return invalidDateFormatMsg;
+            }
+            return formattedString;
+        }
+        else
+            return invalidDateMsg;
+    }
+    catch (e){
+        return invalidOperationMsg;}
 }
 function convertDate(dateObj) {
     return new Date(dateObj).getTime() / 1000;
 }
-//console.log(convertDate(new Date()));
+// console.log(formatDate(new Date(),ISO8601_WITH_TZ_OFFSET_FORMAT,-330));
+console.log(formatDate(new Date(),"HH:mm:ss tt",1140));
