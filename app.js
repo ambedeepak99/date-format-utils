@@ -2,6 +2,20 @@
  * Created by deepak on 1/15/2017.
  */
 
+//region constant variables
+var numRegex = /^\d+$/;
+var monthArrayList=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var dayOfWeekArrayList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var invalidDateMsg="Invalid Date";
+var invalidOperationMsg="Invalid Date Operation";
+var invalidDateFormatMsg="Invalid Date Format";
+var ISO8601_FORMAT = 'yyyy-MM-dd HH:mm:ss.SSS';
+var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddTHH:mm:ss.SSS K';
+var DATETIME_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS tt';
+var DATE_FORMAT = 'yyyy-MM-dd';
+var TIME_FORMAT = 'hh:mm:ss tt';
+//endregion
+
 var exportFunctions = {
     formatDate: formatDate,
     convertDate: convertDate,
@@ -20,21 +34,6 @@ var exportFunctions = {
     TIME_FORMAT:TIME_FORMAT
 };
 module.exports = exportFunctions;
-
-//region constant variables
-var numRegex = /^\d+$/;
-var monthArrayList=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var dayOfWeekArrayList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var invalidDateMsg="Invalid Date";
-var invalidOperationMsg="Invalid Date Operation";
-var invalidDateFormatMsg="Invalid Date Format";
-var ISO8601_FORMAT = 'yyyy-MM-dd HH:mm:ss.SSS';
-var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddTHH:mm:ss.SSS K';
-var DATETIME_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS tt';
-var DATE_FORMAT = 'yyyy-MM-dd';
-var TIME_FORMAT = 'hh:mm:ss tt';
-//endregion
-
 
 //region Helper Function
 function appendZero(number, width, lastPosition) {
@@ -80,10 +79,6 @@ function getYear(d,option,disOption,checkValid) {
     }
 }
 
-// console.log(getYear(new Date()));
-// console.log(getYear('1484588155000'));
-// console.log(getYear(1484588155000,'','sy',true));
-
 function getMonth(d,option,disOption,checkValid) {
     try{
         var dateObj=validateDate(d,checkValid);
@@ -102,9 +97,6 @@ function getMonth(d,option,disOption,checkValid) {
         return null;
     }
 }
-// console.log(getMonth(new Date()));
-// console.log(getMonth('1484588155000'));
-// console.log(getMonth(1484588155000,'','mfn',true));
 
 function getDate(d,option,checkValid) {
     try{
@@ -119,10 +111,6 @@ function getDate(d,option,checkValid) {
         return null;
     }
 }
-
-// console.log(getDate(new Date()));
-// console.log(getDate('1484588155000'));
-// console.log(getDate(1484588155000,'utc',true));
 
 function get12HoursFormat(hour,disOption)
 {
@@ -145,9 +133,6 @@ function getHours(d,option,disOption,checkValid) {
         return null;
     }
 }
-// console.log(getHours(new Date()));
-// console.log(getHours('1484588155000','',true));
-// console.log(getHours(new Date(),'utc',true));
 
 function getMinutes(d,option,checkValid) {
     try{
@@ -207,10 +192,6 @@ function getDayOfWeek(d,option,disOption,checkValid) {
         return null;
     }
 }
-// console.log(getDayOfWeek(new Date()));
-// console.log(getDayOfWeek('1484588155000','utc','dsn',true));
-// console.log(getDayOfWeek(1484588155000,'','dfn',true));
-
 
 function getAM_PM_Hours(dateObj,format,option)
 {
@@ -304,15 +285,3 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
 function convertDate(dateObj) {
     return new Date(dateObj).getTime() / 1000;
 }
-// console.log((Date.parse('1/18/2017, 1:30:00 PM')));
-// console.log("Date String:",formatDate('1/18/2017, 1:30:00 PM','yyyy-MM-dd HH:mm:ss.SSS tt K',330));
-// console.log("Date Object:",formatDate(new Date('2017-01-18 1:30:00'),'yyyy-MM-dd HH:mm:ss.SSS tt K'));
-// console.log("Timestamp:",formatDate(1484726400000,'yyyy-MM-dd HH:mm:ss.SSS tt K'));
-// console.log("Timestamp:",formatDate(new Date('2017-01-19 00:04:39.371 AM'),DATETIME_FORMAT));
-
-// var date = new Date('1/18/2017, 1:30:00 PM');
-// console.log(formatDate(date,ISO8601_FORMAT,330));
-// console.log(formatDate(date,ISO8601_WITH_TZ_OFFSET_FORMAT,330));
-// console.log(formatDate(date,DATETIME_FORMAT,330));
-// console.log(formatDate(date,DATE_FORMAT,330));
-// console.log(formatDate(date,TIME_FORMAT,330));
