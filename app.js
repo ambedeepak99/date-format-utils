@@ -30,8 +30,8 @@ var invalidOperationMsg="Invalid Date Operation";
 var invalidDateFormatMsg="Invalid Date Format";
 var ISO8601_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS';
 var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddThh:mm:ss.SSSO';
-var DATETIME_FORMAT = 'dd MM yyyy hh:mm:ss.SSS';
-var DATE_FORMAT = 'dd MM yyyy';
+var DATETIME_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS';
+var DATE_FORMAT = 'yyyy-MM-dd';
 var TIME_FORMAT = 'hh:mm:ss.SSS';
 //endregion
 
@@ -89,9 +89,9 @@ function getMonth(d,option,disOption,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var month = (option == 'utc' ? (dateObj.getUTCMonth() + 1) : (dateObj.getMonth() + 1));
-            if(disOption=='MONTH')
+            if(disOption=='MMM')
                 return monthArrayList[month-1];
-            else if(disOption=='month')
+            else if(disOption=='mmm')
                 return monthArrayList[month-1].substr(0,3);
             else
                 return appendZero(month, 2);
@@ -257,8 +257,8 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
 
             var day = getDate(dateObj, 'utc');//dd
             var month = getMonth(dateObj, 'utc'); //MM
-            var monthFullName = getMonth(dateObj, 'utc', 'MONTH'); //MONTH
-            var monthShortName = getMonth(dateObj, 'utc', 'month'); //month
+            var monthFullName = getMonth(dateObj, 'utc', 'MMM'); //MONTH
+            var monthShortName = getMonth(dateObj, 'utc', 'mmm'); //month
             var fullYear = getYear(dateObj, 'utc');//yyyy
             var shortYear = getYear(dateObj, 'utc', 'yy');
             var hourObj = getAM_PM_Hours(dateObj, formatStyle, 'utc');// hh or HH and tt
@@ -272,9 +272,9 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
             dateObj.setUTCMinutes(dateObj.getUTCMinutes() + timezoneOffset);
 
             var formattedString= formatStyle.replace(/dd/g,day)
+                .replace(/MMM/g,monthFullName)
+                .replace(/mmm/g,monthShortName)
                 .replace(/MM/g,month)
-                .replace(/MONTH/g,monthFullName)
-                .replace(/month/g,monthShortName)
                 .replace(/yyyy/g,fullYear)
                 .replace(/yy/g,shortYear)
                 .replace(/hh/gi,hourObj.hour)
@@ -303,5 +303,7 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
 function convertDate(dateObj) {
     return new Date(dateObj).getTime() / 1000;
 }
-// console.log(formatDate(new Date(),ISO8601_WITH_TZ_OFFSET_FORMAT,-330));
-console.log(formatDate(new Date(),"HH:mm:ss tt",1140));
+console.log((Date.parse('1/18/2017, 1:30:00 PM')));
+console.log("Date String:",formatDate('1/18/2017, 1:30:00 PM','yyyy-MM-dd HH:mm:ss.SSS tt O',330));
+console.log("Date Object:",formatDate(new Date('1/18/2017, 1:30:00 PM'),'yyyy-MM-dd HH:mm:ss.SSS tt O'));
+console.log("Timestamp:",formatDate(1484726400000,'yyyy-MM-dd HH:mm:ss.SSS tt O'));
