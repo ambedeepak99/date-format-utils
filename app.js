@@ -28,11 +28,11 @@ var dayOfWeekArrayList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Frid
 var invalidDateMsg="Invalid Date";
 var invalidOperationMsg="Invalid Date Operation";
 var invalidDateFormatMsg="Invalid Date Format";
-var ISO8601_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS';
-var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddThh:mm:ss.SSSO';
-var DATETIME_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS';
+var ISO8601_FORMAT = 'yyyy-MM-dd HH:mm:ss.SSS';
+var ISO8601_WITH_TZ_OFFSET_FORMAT = 'yyyy-MM-ddTHH:mm:ss.SSS K';
+var DATETIME_FORMAT = 'yyyy-MM-dd hh:mm:ss.SSS tt';
 var DATE_FORMAT = 'yyyy-MM-dd';
-var TIME_FORMAT = 'hh:mm:ss.SSS';
+var TIME_FORMAT = 'hh:mm:ss tt';
 //endregion
 
 
@@ -89,9 +89,9 @@ function getMonth(d,option,disOption,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var month = (option == 'utc' ? (dateObj.getUTCMonth() + 1) : (dateObj.getMonth() + 1));
-            if(disOption=='MMM')
+            if(disOption=='MMMM')
                 return monthArrayList[month-1];
-            else if(disOption=='mmm')
+            else if(disOption=='MMM')
                 return monthArrayList[month-1].substr(0,3);
             else
                 return appendZero(month, 2);
@@ -194,9 +194,9 @@ function getDayOfWeek(d,option,disOption,checkValid) {
         var dateObj=validateDate(d,checkValid);
         if(dateObj) {
             var dow = (option == 'utc' ? (dateObj.getUTCDay() + 1) : (dateObj.getDay() + 1));
-            if(disOption=='DOW')
+            if(disOption=='dddd')
                 return dayOfWeekArrayList[dow-1];
-            else if(disOption=='dow')
+            else if(disOption=='ddd')
                 return dayOfWeekArrayList[dow-1].substr(0,3);
             else
                 return appendZero(dow, 2);
@@ -251,14 +251,14 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
                 timezoneOffset=0-timezoneOffset;
             }
             if (typeof formatStyle !== 'string') {
-                formatStyle = ISO8601_FORMAT;
+                formatStyle = DATETIME_FORMAT;
             }
             dateObj.setUTCMinutes(dateObj.getUTCMinutes() - timezoneOffset);
 
             var day = getDate(dateObj, 'utc');//dd
             var month = getMonth(dateObj, 'utc'); //MM
-            var monthFullName = getMonth(dateObj, 'utc', 'MMM'); //MONTH
-            var monthShortName = getMonth(dateObj, 'utc', 'mmm'); //month
+            var monthFullName = getMonth(dateObj, 'utc', 'MMMM'); //MONTH
+            var monthShortName = getMonth(dateObj, 'utc', 'MMM'); //month
             var fullYear = getYear(dateObj, 'utc');//yyyy
             var shortYear = getYear(dateObj, 'utc', 'yy');
             var hourObj = getAM_PM_Hours(dateObj, formatStyle, 'utc');// hh or HH and tt
@@ -266,14 +266,17 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
             var second = getSeconds(dateObj, 'utc'); // ss
             var millisecond = getMilliseconds(dateObj, 'utc');//SSS
             var timeZone = timeOffset(timezoneOffset);//O
-            var DOWFullName = getDayOfWeek(dateObj, 'utc', 'DOW');
-            var DOWShortName = getDayOfWeek(dateObj, 'utc', 'dow');
+            var DOWFullName = getDayOfWeek(dateObj, 'utc', 'dddd');
+            var DOWShortName = getDayOfWeek(dateObj, 'utc', 'ddd');
 
             dateObj.setUTCMinutes(dateObj.getUTCMinutes() + timezoneOffset);
 
-            var formattedString= formatStyle.replace(/dd/g,day)
-                .replace(/MMM/g,monthFullName)
-                .replace(/mmm/g,monthShortName)
+            var formattedString= formatStyle
+                .replace(/dddd/g,DOWFullName)
+                .replace(/ddd/g,DOWShortName)
+                .replace(/dd/g,day)
+                .replace(/MMMM/g,monthFullName)
+                .replace(/MMM/g,monthShortName)
                 .replace(/MM/g,month)
                 .replace(/yyyy/g,fullYear)
                 .replace(/yy/g,shortYear)
@@ -282,9 +285,7 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
                 .replace(/ss/g,second)
                 .replace(/SSS/g,millisecond)
                 .replace(/tt/g,hourObj.type)
-                .replace(/DOW/g,DOWFullName)
-                .replace(/dow/g,DOWShortName)
-                .replace(/O/g,timeZone);
+                .replace(/K/g,timeZone);
 
             if(validateOutput==true)
             {
@@ -303,7 +304,15 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
 function convertDate(dateObj) {
     return new Date(dateObj).getTime() / 1000;
 }
-console.log((Date.parse('1/18/2017, 1:30:00 PM')));
-console.log("Date String:",formatDate('1/18/2017, 1:30:00 PM','yyyy-MM-dd HH:mm:ss.SSS tt O',330));
-console.log("Date Object:",formatDate(new Date('1/18/2017, 1:30:00 PM'),'yyyy-MM-dd HH:mm:ss.SSS tt O'));
-console.log("Timestamp:",formatDate(1484726400000,'yyyy-MM-dd HH:mm:ss.SSS tt O'));
+// console.log((Date.parse('1/18/2017, 1:30:00 PM')));
+// console.log("Date String:",formatDate('1/18/2017, 1:30:00 PM','yyyy-MM-dd HH:mm:ss.SSS tt K',330));
+// console.log("Date Object:",formatDate(new Date('2017-01-18 1:30:00'),'yyyy-MM-dd HH:mm:ss.SSS tt K'));
+// console.log("Timestamp:",formatDate(1484726400000,'yyyy-MM-dd HH:mm:ss.SSS tt K'));
+// console.log("Timestamp:",formatDate(new Date('2017-01-19 00:04:39.371 AM'),DATETIME_FORMAT));
+
+// var date = new Date('1/18/2017, 1:30:00 PM');
+// console.log(formatDate(date,ISO8601_FORMAT,330));
+// console.log(formatDate(date,ISO8601_WITH_TZ_OFFSET_FORMAT,330));
+// console.log(formatDate(date,DATETIME_FORMAT,330));
+// console.log(formatDate(date,DATE_FORMAT,330));
+// console.log(formatDate(date,TIME_FORMAT,330));
