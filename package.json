@@ -1,6 +1,6 @@
 {
   "name": "date-format-utils",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Formatting of date object,valid date string, timestamp into string",
   "main": "app.js",
   "scripts": {
@@ -14,5 +14,9 @@
   ],
   "author": "deepak ambekar <ambedeepak99@gmail.com>",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/ambedeepak99/date-format-utils"
+  }
 }
