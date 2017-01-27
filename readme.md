@@ -6,7 +6,7 @@ $ npm install date-format-utils
 ```
 var dateUtil = require('date-format-utils');
 
-// dateUtil.formatDate(Date,FormatStyle,Timezone);
+// formatDate(Date,FormatStyle,Timezone);
 // Date => 'Timestamp ,date object or valid date string'
 // FormatStyle => 'Format string, e.g. `yyyy-MM-dd HH:mm:ss.SSS`'
 // Timezone => 'Timezone of date [Optional]'
@@ -14,6 +14,15 @@ var dateUtil = require('date-format-utils');
 dateUtil.formatDate(new Date()); // Default to format 'yyyy-MM-dd hh:mm:ss.SSS tt'
 dateUtil.formatDate(new Date(),'yyyy-MM-dd'); // Show date
 dateUtil.formatDate(new Date(),'hh:mm:ss tt',480); // Show time [Specify Timezone]
+
+// You can convert a date into timestamp using toTimestamp(Date,Option)
+// Date => 'date object or valid date string'
+// Option => 'timestamp option [timestamp in sec,timestamp in millisecond]
+// Default option is millisecond
+
+dateUtil.toTimestamp(new Date()); //Show timestamp in milliseconds [Default]
+dateUtil.toTimestamp(new Date(),'ms'); //Show timestamp in milliseconds
+dateUtil.toTimestamp(new Date(),'sec'); //Show timestamp in sec
 ```                
 **The following describes the custom date and time format specifiers :**
 >* "dd"   : The day of the month, from 01 through 31.
@@ -42,11 +51,21 @@ console.log(dateUtil.formatDate(date,dateUtil.DATETIME_FORMAT,330));
 console.log(dateUtil.formatDate(date,dateUtil.DATE_FORMAT,330));
 console.log(dateUtil.formatDate(date,dateUtil.TIME_FORMAT,330));
 
+console.log(dateUtil.toTimestamp(date));
+console.log(dateUtil.toTimestamp(date,'ms'));
+console.log(dateUtil.toTimestamp(date,'sec'));
+console.log(dateUtil.toTimestamp(date,'xyz'));
+
 // The example displays the following output:
 //      2017-01-18 13:30:00.000
 //      2017-01-18T13:30:00.000 +0530
 //      2017-01-18 01:30:00.000 PM
 //      2017-01-18
 //      01:30:00 PM
+
+//      1484726400000
+//      1484726400000
+//      1484726400
+//      Invalid Timestamp Option
 
 ```

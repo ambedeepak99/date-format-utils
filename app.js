@@ -7,6 +7,7 @@ var numRegex = /^\d+$/;
 var monthArrayList=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var dayOfWeekArrayList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var invalidDateMsg="Invalid Date";
+var invalidTimestampOption="Invalid Timestamp Option";
 var invalidOperationMsg="Invalid Date Operation";
 var invalidDateFormatMsg="Invalid Date Format";
 var ISO8601_FORMAT = 'yyyy-MM-dd HH:mm:ss.SSS';
@@ -18,7 +19,8 @@ var TIME_FORMAT = 'hh:mm:ss tt';
 
 var exportFunctions = {
     formatDate: formatDate,
-    convertDate: convertDate,
+    convertDate: toTimestamp,
+    toTimestamp:toTimestamp,
     getYear: getYear,
     getMonth: getMonth,
     getDate: getDate,
@@ -282,6 +284,27 @@ function formatDate(dateString, formatStyle,timezoneOffset,validateOutput) {
     catch (e){
         return invalidOperationMsg;}
 }
-function convertDate(dateObj) {
-    return new Date(dateObj).getTime() / 1000;
+function toTimestamp(d,option) {
+
+    try {
+        if(!option)
+            option='ms';
+        var dateObj = validateDate(d, true);
+        if (dateObj) {
+            var timestamp=dateObj.getTime();
+            if(option=='sec')
+            {
+                timestamp=timestamp/1000;
+            }
+            else if(option!='ms')
+            {
+                return invalidTimestampOption;
+            }
+            return Math.round(timestamp);
+        }
+        else
+            return invalidDateMsg;
+    }
+    catch (e){
+        return invalidOperationMsg;}
 }

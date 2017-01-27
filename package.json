@@ -1,7 +1,7 @@
 {
   "name": "date-format-utils",
-  "version": "2.1.1",
-  "description": "Formatting of date object,valid date string, timestamp into string",
+  "version": "2.2.0",
+  "description": "Formatting of date object,valid date string, timestamp into string and converting date object into timestamp",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,9 @@
     "date-utils",
     "date",
     "date format",
-    "format"
+    "format",
+    "timestamp",
+    "converting timestamp"
   ],
   "author": "deepak ambekar <ambedeepak99@gmail.com>",
   "license": "ISC",
